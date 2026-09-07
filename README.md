@@ -1,45 +1,46 @@
 # Mouse Enter
 
-Windows için AutoHotkey v2 mouse kısayolları.
+AutoHotkey v2 mouse shortcuts for Windows.
 
-## Davranış
+## Behavior
 
-- **Sol tık:** beklemeden çalışır; sürükleme hemen başlar.
-- **Sol + sağ tuş:** bir tuş basılıyken diğerine basınca yaklaşık **50 ms sonra Enter** gönderilir. İki basış arasında süre sınırı yoktur.
-- **Sağ tık:** en fazla 120 ms bekletilir; kısa basış bırakıldığında gönderilir.
-- **Orta tuş:** kısa basış normal orta tık; 300 ms basılı tutma Windows ekran alıntısını açar (Win+Shift+S).
-- **Kapatma:** Ctrl+Alt+F12 veya sistem tepsisi menüsü.
+- **Left click:** immediate, including the start of a drag.
+- **Left + right buttons:** pressing the other button while one is held sends **Enter after approximately 50 ms**. There is no maximum interval between the two presses.
+- **Right click:** buffered for up to 120 ms; a short press is sent on release.
+- **Middle button:** a short press sends a normal middle click; holding for 300 ms opens Windows screen snipping (Win+Shift+S).
+- **Exit:** Ctrl+Alt+F12 or the system tray menu.
 
-Sol tuş önce basılırsa ilk sol tık uygulamaya ulaşır. Birleşik basış algılandığında gönderilmiş mouse basışı serbest bırakılır ve Enter zamanlanır. Tuşları erken bırakmak planlanan Enter'ı iptal etmez. Windows zamanlayıcısı nedeniyle 50 ms yaklaşık bir değerdir.
+If you press the left button first, that initial click reaches the application. When a two-button combination is detected, any previously forwarded button press is released and Enter is scheduled. Releasing the buttons early does not cancel the scheduled Enter. The 50 ms delay is approximate because it depends on Windows timer scheduling.
 
-## Kurulum ve çalıştırma
+## Setup and usage
 
-1. Bu repoyu indirin veya klonlayın.
-2. [AutoHotkey v2.0.27](https://github.com/AutoHotkey/AutoHotkey/releases/tag/v2.0.27) paketini resmi kaynaktan indirin.
-3. Projede bir runtime klasörü oluşturup AutoHotkey64.exe dosyasını içine koyun.
-4. PowerShell'de proje klasöründen çalıştırın:
+1. Download or clone this repository.
+2. Download [AutoHotkey v2.0.27](https://github.com/AutoHotkey/AutoHotkey/releases/tag/v2.0.27) from the official release.
+3. Create a runtime folder inside the project and place AutoHotkey64.exe in it.
+4. Run the following from the project folder in PowerShell:
 
     powershell -ExecutionPolicy Bypass -File .\Start.ps1
 
-Durdurmak için Ctrl+Alt+F12 kullanın veya:
+To stop, press Ctrl+Alt+F12 or run:
 
     powershell -ExecutionPolicy Bypass -File .\Stop.ps1
 
-Başlangıca otomatik ekleme yapılmaz. AutoHotkey çalışma zamanı, yerel loglar ve eski sürüm yedekleri repoya dahil değildir.
+The script does not register itself to run at startup. The AutoHotkey runtime, local logs, and previous-version backups are excluded from this repository.
 
-## Nasıl çalışıyor?
+## How it works
 
-MouseEnter.ahk sol ve sağ tuşun durumunu ayrı izler. Sol basış hemen iletilir. Diğer tuş basılıyken ikinci basış algılanırsa bekleyen sağ tık iptal edilir; daha önce iletilmiş basış serbest bırakılır ve tek seferlik SetTimer ile Enter gönderilir. Aynı basışı tekrar işleme almamak için tuş durumları tutulur.
+MouseEnter.ahk tracks the left and right button states separately. Left presses are forwarded immediately. If the second button is pressed while the other is held, any pending right click is canceled, a previously forwarded press is released, and a one-shot SetTimer schedules Enter. Button states prevent the same press from being processed repeatedly.
 
-Enter gecikmesi: SetTimer(SendChordEnter, -50).
-Sağ tık bekleme süresi: Schedule(button, -120).
-Orta tuş ekran alıntısı eşiği: SetTimer(MiddleHold, -300).
+- Enter delay: SetTimer(SendChordEnter, -50).
+- Right-click buffering: Schedule(button, -120).
+- Middle-button screenshot threshold: SetTimer(MiddleHold, -300).
 
-## Kontroller
+## Checks
 
-Betikte 15 dahili kontrol bulunur; sol tık, iki basış sırası, tekrar engelleme, orta tuş ve gerçek Enter zamanlayıcısını kapsar.
+The script includes 15 internal checks covering immediate left clicks, both button orders, repeat prevention, the middle button, and the actual Enter timer.
 
     .\runtime\AutoHotkey64.exe /ErrorStdOut .\MouseEnter.ahk --test
 
-Başarılı sonuç: PASS: 15 checks including real timer.
-Test modu aynı betiğin çalışan örneğini kapatabilir; testten sonra Start.ps1 ile tekrar başlatın.
+Expected result: PASS: 15 checks including real timer.
+
+Test mode may close the running instance of this script. Run Start.ps1 again after testing.

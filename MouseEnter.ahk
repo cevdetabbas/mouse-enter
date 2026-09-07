@@ -7,7 +7,7 @@ global middleState := "idle"
 global state := Map("LButton", "idle", "RButton", "idle")
 global started := Map("LButton", 0, "RButton", 0)
 global callbacks := Map("LButton", Flush.Bind("LButton"), "RButton", Flush.Bind("RButton"))
-A_IconTip := "Mouse Enter - Ctrl+Alt+F12: kapat"
+A_IconTip := "Mouse Enter - Ctrl+Alt+F12: exit"
 OnExit(Cleanup)
 if testing {
     SelfTest()
@@ -20,7 +20,7 @@ Hotkey("$*RButton Up", Up.Bind("RButton"))
 Hotkey("$*MButton", MiddleDown)
 Hotkey("$*MButton Up", MiddleUp)
 Hotkey("^!F12", (*) => ExitApp())
-A_TrayMenu.Add("Kapat (Ctrl+Alt+F12)", (*) => ExitApp())
+A_TrayMenu.Add("Exit (Ctrl+Alt+F12)", (*) => ExitApp())
 
 MiddleDown(*) {
     global middleState
@@ -154,4 +154,5 @@ SelfTest() {
     Check("", "Timer fires only once")
     FileAppend("PASS: 15 checks including real timer" Chr(10), "*")
 }
+
 
